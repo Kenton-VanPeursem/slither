@@ -22,4 +22,12 @@ public class SnakeConfig {
     public int getBlockSize() {
         return this.blockSize;
     }
+
+    @Override
+    public String toString() {
+        return "SnakeConfig("
+                + this.frameSpeedMillis + ", "
+                + this.windowSize + ", "
+                + this.blockSize + ")";
+    }
 }

@@ -31,6 +31,8 @@ public class GameController extends JFrame {
         }
 
         SnakeConfig config = titlePanel.getConfig();
+
+        logger.debug("Snake configuration {}", config);
         getContentPane().remove(titlePanel);
 
         setSize(config.getWindowSize(), config.getWindowSize() + WINDOW_BUFFER);
@@ -44,14 +46,15 @@ public class GameController extends JFrame {
         while (!game.isGameOver()) {
             if (!game.isPaused() && game.isStarted()) {
                 game.step();
-
-                try {
-                    TimeUnit.MILLISECONDS.sleep(config.getFrameSpeedMillis());
-                } catch (InterruptedException e) {
-                    logger.debug("Interrupted");
-                    throw e;
-                }
             }
+
+            try {
+                TimeUnit.MILLISECONDS.sleep(config.getFrameSpeedMillis());
+            } catch (InterruptedException e) {
+                logger.debug("Interrupted");
+                throw e;
+            }
+
             repaint();
         }
     }
@@ -95,6 +98,7 @@ public class GameController extends JFrame {
 
         @Override
         public void keyPressed(KeyEvent e) {
+            game.begin();
             // Don't do anything on a key press
         }
 

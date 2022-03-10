@@ -3,13 +3,13 @@ package slither;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.*;
-
 import org.slf4j.*;
 
 public class SnakePanel extends JPanel {
-    private int WINDOW_BUFFER = 25;
+    private static final int WINDOW_BUFFER = 25;
     private static final Logger logger = LoggerFactory.getLogger(SnakePanel.class);
     private transient Snake snake;
 
@@ -21,7 +21,7 @@ public class SnakePanel extends JPanel {
     private boolean pause;
     private boolean started;
 
-    private HashMap<Point, Boolean> outOfBoundsCache = new HashMap<>();
+    private transient Map<Point, Boolean> outOfBoundsCache = new HashMap<>();
 
     SnakePanel(int width, int height, int blocksize) {
         this.pause = false;
@@ -74,7 +74,8 @@ public class SnakePanel extends JPanel {
     }
 
     public void begin() {
-        started = true;
+        logger.debug("Snake game started.");
+        this.started = true;
     }
 
     public void setUserInput(Direction direction) {

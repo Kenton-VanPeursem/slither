@@ -27,7 +27,7 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.3.0-alpha14'
 }
 
-def myMainClass = 'slither.Slither'
+def myMainClass = 'slither.GameController'
 
 application {
     // Define the main class for the application.

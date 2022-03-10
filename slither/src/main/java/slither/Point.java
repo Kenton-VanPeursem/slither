@@ -39,6 +39,11 @@ public class Point {
             return false;
         }
 
-        return ((Point) o).getX() == this.getX() || ((Point) o).getY() == this.getY();
+        return ((Point) o).getX() == x || ((Point) o).getY() == y;
+    }
+
+    @Override
+    public int hashCode() {
+        return x + y;
     }
 }
