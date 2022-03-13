@@ -29,7 +29,7 @@ public class Snake {
     private Random rand;
 
     Snake(int x, int y, int maxX, int maxY) {
-        rand = new Random(3L);
+        rand = new Random();
         this.maxX = maxX;
         this.maxY = maxY;
         logger.debug("Snake with start position ({}, {})", x, y);
