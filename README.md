@@ -24,3 +24,8 @@ movement keys. Pressing the escape key will restart the game. If the game has no
 started, pressing the escape key will take you back to the start menu for selecting
 the difficulty.
 </p>
+
+Screenshots (MacOS):
+![Main Menu](screenshots/menu.png)
+![Example Gameplay](screenshots/gameplay.png)
+
