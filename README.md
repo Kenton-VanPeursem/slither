@@ -7,6 +7,9 @@ Just having some fun.
 1. Have java installed
 
 
+Use script `./play.sh` to build and start GUI.
+
+
 <b>Game Instructions:</b>
 <p>
 Eat the apples as they appear on the screen. Movement can be accomplished using the
