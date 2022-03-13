@@ -33,17 +33,27 @@ public class Point {
         y -= delta;
     }
 
+    public Point copy() {
+        return new Point(x, y);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Point)) {
             return false;
         }
 
-        return ((Point) o).getX() == x || ((Point) o).getY() == y;
+        return ((Point) o).getX() == x && ((Point) o).getY() == y;
     }
 
     @Override
     public int hashCode() {
-        return x + y;
+        // map (x,y) to [0,1,000,000]
+        return y*1000 + x;
+    }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
     }
 }

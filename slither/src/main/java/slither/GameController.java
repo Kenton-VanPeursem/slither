@@ -1,105 +1,113 @@
 package slither;
 
-import org.slf4j.*;
-
 import javax.swing.*;
 
-import java.util.concurrent.TimeUnit;
-
-import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import java.awt.BorderLayout;
+
 public class GameController extends JFrame {
-    private static final Logger logger = LoggerFactory.getLogger(GameController.class);
-    private SnakePanel game;
+    private GamePanel game;
 
-    private int WINDOW_BUFFER = 25;
+    private transient SnakeConfig prevConfig;
 
-    GameController() throws InterruptedException {
+    private static final int WINDOW_BUFFER = 25;
+
+    GameController() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         setTitle("Snake");
+        startMenu();
+    }
+
+    private void startMenu() {
+        getContentPane().removeAll();
 
         setSize(250, 300);
-        var titlePanel = new DifficultyPanel();
-        getContentPane().add(titlePanel, BorderLayout.CENTER);
+        getContentPane().add(new StartMenuPanel(), BorderLayout.CENTER);
+        revalidate();
         setVisible(true);
+    }
 
-        while (!titlePanel.ready()) {
-            // just wait until the user clicks the button
-        }
-
-        SnakeConfig config = titlePanel.getConfig();
-
-        logger.debug("Snake configuration {}", config);
-        getContentPane().remove(titlePanel);
+    public void initSnake(SnakeConfig config) {
+        prevConfig = config;
+        getContentPane().removeAll();
 
         setSize(config.getWindowSize(), config.getWindowSize() + WINDOW_BUFFER);
         setResizable(false);
 
-        game = new SnakePanel(getWidth(), getHeight(), config.getBlockSize());
+        game = new GamePanel(getWidth(), getHeight(), config.getBlockSize());
+
         getContentPane().add(game, BorderLayout.CENTER);
+        revalidate();
 
-        this.addKeyListener(new SnakeController());
-
-        while (!game.isGameOver()) {
-            if (!game.isPaused() && game.isStarted()) {
-                game.step();
-            }
-
-            try {
-                TimeUnit.MILLISECONDS.sleep(config.getFrameSpeedMillis());
-            } catch (InterruptedException e) {
-                logger.debug("Interrupted");
-                throw e;
-            }
-
-            repaint();
+        // maybe just don't add a new key listener if already exists?
+        for (var kl : getKeyListeners() ) {
+            removeKeyListener(kl);
         }
+        addKeyListener(new SnakeController());
+
+        requestFocus();
+
+        game.start((int) config.getFrameSpeedMillis());
     }
 
     private class SnakeController implements KeyListener {
         @Override
         public void keyTyped(KeyEvent e) {
-            game.begin();
+            // Don't do anything on a key typed
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
             var dir = game.getSnake().currentDirection();
-            switch (e.getKeyChar()) {
-                case 'w':
-                    dir = Direction.UP;
-                    game.unpause();
-                    break;
-                case 'a':
+            switch (e.getKeyCode()) {
+                case 27:    // esc
+                    if (game.isStarted()) {
+                        initSnake(prevConfig);
+                    }
+                    else
+                        startMenu();
+                    return;
+                case 65:    // a
+                case 37:    // left
+                case 77:    // m
                     dir = Direction.LEFT;
+                    game.begin();
                     game.unpause();
                     break;
-                case 's':
+                case 83:    // s
+                case 40:    // down
+                case 44:    // ,
                     dir = Direction.DOWN;
+                    game.begin();
                     game.unpause();
                     break;
-                case 'd':
+                case 68:    // d
+                case 39:    // right
+                case 46:    // .
                     dir = Direction.RIGHT;
+                    game.begin();
                     game.unpause();
                     break;
-                case ' ':
+                case 87:     // w
+                case 38:    // up
+                case 75:    // k
+                    dir = Direction.UP;
+                    game.begin();
+                    game.unpause();
+                    break;
+                case 32:    // space
                     game.pause();
                     break;
                 default:
                     // don't do anything
             }
+
             if (!game.isPaused()) {
                 game.setUserInput(dir);
-                logger.debug("Snake is going {}, {}, {}",
-                        dir,
-                        e.getKeyCode(),
-                        e.getKeyChar());
             }
-        }
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-            game.begin();
-            // Don't do anything on a key press
         }
 
         @Override
@@ -108,7 +116,7 @@ public class GameController extends JFrame {
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         new GameController();
     }
 }

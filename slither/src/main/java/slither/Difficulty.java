@@ -1,5 +1,5 @@
 package slither;
 
 public enum Difficulty {
-    UNSET, EASY, MEDIUM, HARD;
+    UNSET, SUPER_EASY, EASY, MEDIUM, HARD;
 }
