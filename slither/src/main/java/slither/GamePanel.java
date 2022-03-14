@@ -23,23 +23,21 @@ public class GamePanel extends JPanel {
     private int dim;
     private int blocksize;
 
-    private boolean pauseFlag;
-    private boolean started;
+    private final int borderWidth = 2;
+
+    private boolean pauseFlag = false;
+    private boolean started = false;
 
     private transient Map<Point, Boolean> outOfBoundsCache = new Hashtable<>();
 
     public GamePanel(int width, int height, int blocksize) {
         logger.debug("Creating GamePanel width:{} height:{} blocksize:{}",
                 width, height, blocksize);
-        pauseFlag = false;
-        started = false;
 
         this.blocksize = blocksize;
-
         dim = width / blocksize;
 
         int start = dim / 3;
-
         snake = new Snake(start, start, dim, dim);
     }
 
@@ -91,19 +89,31 @@ public class GamePanel extends JPanel {
         if (!isStarted()) {
             // display a not started message if the
             logger.debug("NOT STARTED");
-            drawText(g, MessageConstants.START_MESSAGE, MessageConstants.START_X_PADDING, MessageConstants.START_Y_PADDING);
+            drawText(g,
+                    MessageConstants.START_MESSAGE,
+                    MessageConstants.START_X_PADDING,
+                    MessageConstants.START_Y_PADDING);
         } else if (isPaused()) {
             // display a paused message on the screen
             logger.debug("PAUSED");
-            drawText(g, MessageConstants.PAUSED_MESSAGE, MessageConstants.PAUSED_X_PADDING, MessageConstants.PAUSED_Y_PADDING);
+            drawText(g,
+                    MessageConstants.PAUSED_MESSAGE,
+                    MessageConstants.PAUSED_X_PADDING,
+                    MessageConstants.PAUSED_Y_PADDING);
         } else if (isWinner()) {
             // display a game over message to the screen
             logger.debug("Player won");
-            drawText(g, MessageConstants.WINNER_MESSAGE, MessageConstants.WINNER_X_PADDING, MessageConstants.WINNER_Y_PADDING);
+            drawText(g,
+                    MessageConstants.WINNER_MESSAGE,
+                    MessageConstants.WINNER_X_PADDING,
+                    MessageConstants.WINNER_Y_PADDING);
         } else if (gameOver()) {
             // display a game over message to the screen
             logger.debug("GAME OVER");
-            drawText(g, MessageConstants.GAMEOVER_MESSAGE, MessageConstants.GAMEOVER_X_PADDING, MessageConstants.GAMEOVER_Y_PADDING);
+            drawText(g,
+                    MessageConstants.GAMEOVER_MESSAGE,
+                    MessageConstants.GAMEOVER_X_PADDING,
+                    MessageConstants.GAMEOVER_Y_PADDING);
         }
         drawScore(g);
     }
@@ -131,30 +141,54 @@ public class GamePanel extends JPanel {
             return;
         }
 
-        g.setColor(Color.RED);
-        fillRect(g, apple);
+        g.setColor(Color.RED.darker());
+        borderRect(g, apple);
+
+        // give apple texture/design
+        for (int i = 1; i < 6; i++) {
+            if (i % 2 == 1)
+                g.setColor(Color.RED);
+            else
+                g.setColor(Color.RED.darker());
+
+            fillRect(g, apple, borderWidth * i);
+        }
     }
 
     private void drawHead(Graphics g) {
         var head = snake.getHeadPosition();
+        g.setColor(Color.GREEN);
+        borderRect(g, head);
+
         g.setColor(Color.GREEN.darker());
-        fillRect(g, head);
+        fillRect(g, head, borderWidth);
     }
 
     private void drawBody(Graphics g) {
-        g.setColor(Color.GREEN);
         var positions = snake.getBody();
         for (int i = 0; i < positions.size(); i++) {
             var pos = positions.get(i);
-            fillRect(g, pos);
+            g.setColor(Color.GREEN.darker());
+            borderRect(g, pos);
+
+            g.setColor(Color.GREEN);
+            fillRect(g, pos, borderWidth);
         }
     }
 
-    private void fillRect(Graphics g, Point point) {
+    private void borderRect(Graphics g, Point point) {
         var startX = point.getX() * blocksize;
         var startY = point.getY() * blocksize;
 
         g.fillRect(startX, startY, blocksize, blocksize);
+    }
+
+    private void fillRect(Graphics g, Point point, int borderWidth) {
+        var startX = point.getX() * blocksize + borderWidth;
+        var startY = point.getY() * blocksize + borderWidth;
+
+        var innerBlocksize = blocksize - (borderWidth * 2);
+        g.fillRect(startX, startY, innerBlocksize, innerBlocksize);
     }
 
     private void drawText(Graphics g, String text, int xPadding, int yPadding) {

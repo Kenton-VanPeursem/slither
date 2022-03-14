@@ -13,11 +13,9 @@ public class Snake {
 
     private Point head;
     private Point addLocation;
-    private List<Point> body;
+    private List<Point> body = new ArrayList<>();
     private Point applePos;
-    private Direction faceDirection;
-
-    private Set<Point> availablePositions;
+    private Direction faceDirection = Direction.RIGHT;
 
     private int delta = 1;
 
@@ -32,15 +30,31 @@ public class Snake {
 
     public Snake(int x, int y, int maxX, int maxY) {
         rand = new Random();
+
         this.maxX = maxX;
         this.maxY = maxY;
-        logger.debug("Snake with start position ({}, {})", x, y);
         head = new Point(x, y);
-        body = new ArrayList<>();
+        logger.debug("Snake with start position {}", head);
 
         addLocation = head.copy();
         addLocation.decrementX(delta);
-        faceDirection = Direction.RIGHT;
+
+        applePos = randomApple();
+
+        positionsLog();
+    }
+
+    public Snake(int x, int y, int maxX, int maxY, int seed) {
+        setRandomSeed(seed);
+
+        this.maxX = maxX;
+        this.maxY = maxY;
+        head = new Point(x, y);
+        logger.debug("Snake with start position {}", head);
+
+        addLocation = head.copy();
+        addLocation.decrementX(delta);
+
         applePos = randomApple();
 
         positionsLog();
@@ -67,6 +81,10 @@ public class Snake {
 
     public int maxY() {
         return maxY;
+    }
+
+    public void setRandomSeed(long seed) {
+        rand = new Random(seed);
     }
 
     private void followHead() {
@@ -124,26 +142,32 @@ public class Snake {
         return faceDirection;
     }
 
-    private Direction oppositeDirection(Direction direction) throws IllegalArgumentException {
-        switch (direction) {
-            case UP:
-                return Direction.DOWN;
-            case DOWN:
-                return Direction.UP;
-            case LEFT:
-                return Direction.RIGHT;
-            case RIGHT:
-                return Direction.LEFT;
-            default:
-                // Nothing
-                throw new IllegalArgumentException(direction.toString());
+    public void setDirection(Direction direction) {
+        if (direction != Direction.oppositeDirection(faceDirection)) {
+            faceDirection = direction;
         }
     }
 
-    public void setDirection(Direction direction) {
-        if (direction != oppositeDirection(faceDirection)) {
-            faceDirection = direction;
+    public Point nextPoint(Point x, Direction direction) {
+        var next = x.copy();
+        switch (direction) {
+            case UP:
+                next.decrementY(delta);
+                break;
+            case DOWN:
+                next.incrementY(delta);
+                break;
+            case LEFT:
+                next.decrementX(delta);
+                break;
+            case RIGHT:
+                next.incrementX(delta);
+                break;
+            default:
+                logger.error("Unknown Direction: {}", faceDirection);
         }
+
+        return next;
     }
 
     public synchronized void move() {
@@ -181,12 +205,8 @@ public class Snake {
         return applePos;
     }
 
-    public Set<Point> getAvailablePositions() {
-        return availablePositions;
-    }
-
     private Point randomApple() {
-        setAvailablePositions();
+        var availablePositions = getAvailablePositions();
         if (availablePositions.isEmpty()) {
             won = true;
             return null;
@@ -202,16 +222,22 @@ public class Snake {
         return nextApple;
     }
 
-    private void setAvailablePositions() {
-        availablePositions = new HashSet<>();
-        List<Point> snake = getPositions();
+    private Set<Point> allPositions() {
+        var valid = new HashSet<Point>();
         for (int i = 0; i < maxX; i++) {
             for (int j = 0; j < maxY; j++) {
-                Point p = new Point(i, j);
-                if (snake.stream().noneMatch(b -> b.equals(p)))
-                    availablePositions.add(p);
+                valid.add(new Point(i, j));
             }
         }
+        return valid;
+    }
+
+    public Set<Point> getAvailablePositions() {
+        var valid = allPositions();
+        List<Point> snake = getPositions();
+        for (Point p: snake)
+            valid.remove(p);
+        return valid;
     }
 
     public synchronized boolean didCollide() {

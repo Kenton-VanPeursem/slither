@@ -46,14 +46,17 @@ public class BruteForcePlayer implements Player {
 
     public static void main(String[] args) {
         BruteForcePlayer player = new BruteForcePlayer();
-
         GameController gameController = new GameController();
 
-        // won in 59163
-        SnakeConfig config = new SnakeConfig(10, 1100, 50);
+        var block = 25;
+        var boardSize = 21;
+
+        SnakeConfig config = new SnakeConfig(25, boardSize * block, block);
         gameController.initSnake(config);
 
         Snake board = gameController.getSnake();
+        board.setRandomSeed(3); // for reproducibility: 55996 ticks
+
         gameController.begin();
         while(!(gameController.isWinner() || gameController.gameOver())) {
             player.analyzeBoard(board);
