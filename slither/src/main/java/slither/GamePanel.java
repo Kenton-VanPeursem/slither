@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import javax.swing.*;
@@ -26,9 +26,9 @@ public class GamePanel extends JPanel {
     private boolean pauseFlag;
     private boolean started;
 
-    private transient Map<Point, Boolean> outOfBoundsCache = new HashMap<>();
+    private transient Map<Point, Boolean> outOfBoundsCache = new Hashtable<>();
 
-    GamePanel(int width, int height, int blocksize) {
+    public GamePanel(int width, int height, int blocksize) {
         logger.debug("Creating GamePanel width:{} height:{} blocksize:{}",
                 width, height, blocksize);
         pauseFlag = false;
@@ -108,18 +108,20 @@ public class GamePanel extends JPanel {
         drawScore(g);
     }
 
-    private boolean gameOver() {
+    public boolean gameOver() {
         if (didCollide()) {
             logger.debug("Snake collided with itself.");
+            return true;
         }
         if (outOfBounds()) {
             logger.debug("Snake has gone out of bounds.");
+            return true;
         }
 
-        return didCollide() || outOfBounds();
+        return false;
     }
 
-    private boolean isWinner() {
+    public boolean isWinner() {
         return snake.isWinner();
     }
 
@@ -194,9 +196,9 @@ public class GamePanel extends JPanel {
 
     private boolean outOfBounds() {
         return outOfBoundsCache.computeIfAbsent(
-                    snake.getHeadPosition(),
-                    pos -> Boolean.valueOf(outOfBounds(pos))
-                ).booleanValue();
+                snake.getHeadPosition(),
+                pos -> Boolean.valueOf(outOfBounds(pos))
+            ).booleanValue();
     }
 
     class MyUpdateListener implements ActionListener {

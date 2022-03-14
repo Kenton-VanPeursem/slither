@@ -5,7 +5,7 @@ public class SnakeConfig {
     private int windowSize;
     private int blockSize;
 
-    SnakeConfig(long frameSpeedMillis, int windowSize, int blockSize) {
+    public SnakeConfig(long frameSpeedMillis, int windowSize, int blockSize) {
         this.frameSpeedMillis = frameSpeedMillis;
         this.windowSize = windowSize;
         this.blockSize = blockSize;

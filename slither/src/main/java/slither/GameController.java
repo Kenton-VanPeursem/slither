@@ -14,7 +14,7 @@ public class GameController extends JFrame {
 
     private static final int WINDOW_BUFFER = 25;
 
-    GameController() {
+    public GameController() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         setTitle("Snake");
@@ -51,6 +51,26 @@ public class GameController extends JFrame {
         requestFocus();
 
         game.start((int) config.getFrameSpeedMillis());
+    }
+
+    public Snake getSnake() {
+        return game.getSnake();
+    }
+
+    public boolean gameOver() {
+        return game.gameOver();
+    }
+
+    public boolean isWinner() {
+        return game.isWinner();
+    }
+
+    public void begin() {
+        game.begin();
+    }
+
+    public void setUserInput(Direction direction) {
+        game.setUserInput(direction);
     }
 
     private class SnakeController implements KeyListener {
@@ -106,7 +126,7 @@ public class GameController extends JFrame {
             }
 
             if (!game.isPaused()) {
-                game.setUserInput(dir);
+                setUserInput(dir);
             }
         }
 

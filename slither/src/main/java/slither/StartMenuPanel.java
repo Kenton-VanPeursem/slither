@@ -13,7 +13,7 @@ import java.awt.GridLayout;
 public class StartMenuPanel extends JPanel {
     private static final Logger logger = LoggerFactory.getLogger(StartMenuPanel.class);
 
-    StartMenuPanel() {
+    public StartMenuPanel() {
         JLabel label = new JLabel("Snake Game", SwingConstants.CENTER);
         setLayout(new GridLayout(4,1));
         add(label);

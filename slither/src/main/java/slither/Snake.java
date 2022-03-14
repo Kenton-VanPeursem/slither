@@ -23,12 +23,14 @@ public class Snake {
 
     private boolean won = false;
 
+    private int tickCount = 0;
+
     private int maxX;
     private int maxY;
 
     private Random rand;
 
-    Snake(int x, int y, int maxX, int maxY) {
+    public Snake(int x, int y, int maxX, int maxY) {
         rand = new Random();
         this.maxX = maxX;
         this.maxY = maxY;
@@ -57,6 +59,14 @@ public class Snake {
     public void eat() {
         body.add(addLocation);
         applePos = randomApple();
+    }
+
+    public int maxX() {
+        return maxX;
+    }
+
+    public int maxY() {
+        return maxY;
     }
 
     private void followHead() {
@@ -136,7 +146,7 @@ public class Snake {
         }
     }
 
-    public void move() {
+    public synchronized void move() {
         switch (faceDirection) {
             case UP:
                 up();
@@ -159,10 +169,20 @@ public class Snake {
         if (applePos.equals(head)) {
             eat();
         }
+
+        tickCount++;
+    }
+
+    public int getTotalTicks() {
+        return tickCount;
     }
 
     public Point applePosition() {
         return applePos;
+    }
+
+    public Set<Point> getAvailablePositions() {
+        return availablePositions;
     }
 
     private Point randomApple() {
@@ -194,7 +214,7 @@ public class Snake {
         }
     }
 
-    public boolean didCollide() {
+    public synchronized boolean didCollide() {
         return body.stream().anyMatch(b -> b.equals(head));
     }
 }
