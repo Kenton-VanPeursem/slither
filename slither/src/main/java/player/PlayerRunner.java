@@ -2,7 +2,6 @@ package player;
 
 import slither.*;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 
 import org.slf4j.*;
