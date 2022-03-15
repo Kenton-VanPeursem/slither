@@ -16,14 +16,14 @@ public class GreedyPlayer implements Player {
     PlayerTracker tracker = new PlayerTracker(this);
 
     private Random rand;
-    private int seed;
+    private long seed;
 
     public GreedyPlayer() {
         seed = new Random().nextInt();
         rand = new Random(seed);
     }
 
-    public GreedyPlayer(int seed) {
+    public GreedyPlayer(long seed) {
         this.seed = seed;
         rand = new Random(seed);
     }
@@ -104,23 +104,23 @@ public class GreedyPlayer implements Player {
         }
     }
 
-    public int play(GameController gameController, SnakeConfig config, int seed) {
+    @Override
+    public int play(GameController gameController, SnakeConfig config) {
         gameController.initSnake(config);
 
         Snake board = gameController.getSnake();
-        board.setRandomSeed(seed);
         gameController.begin();
         while(!(gameController.isWinner() || gameController.gameOver())) {
             analyzeBoard(board);
             makeMove(gameController);
         }
-        tracker.recordGame(board.score(), board.getTotalTicks(), seed);
+        tracker.recordGame(board.score(), board.getTotalTicks(), config.randSeed());
 
         return board.score();
     }
 
     @Override
-    public int randSeed() {
+    public long randSeed() {
         return seed;
     }
 }

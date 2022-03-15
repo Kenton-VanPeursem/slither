@@ -7,6 +7,6 @@ import slither.SnakeConfig;
 public interface Player {
     public void analyzeBoard(Snake board);
     public void makeMove(GameController gameController);
-    public int play(GameController gameController, SnakeConfig config, int seed);
-    public int randSeed();
+    public int play(GameController gameController, SnakeConfig config);
+    public long randSeed();
 }

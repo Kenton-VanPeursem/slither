@@ -45,12 +45,10 @@ public class BruteForcePlayer implements Player {
     }
 
     @Override
-    public int play(GameController gameController, SnakeConfig config, int seed) {
+    public int play(GameController gameController, SnakeConfig config) {
         gameController.initSnake(config);
 
         Snake board = gameController.getSnake();
-        board.setRandomSeed(seed); // for reproducibility: 55996 ticks
-
         gameController.begin();
         while(!(gameController.isWinner() || gameController.gameOver())) {
             analyzeBoard(board);
@@ -61,7 +59,7 @@ public class BruteForcePlayer implements Player {
     }
 
     @Override
-    public int randSeed() {
+    public long randSeed() {
         return -1;
     }
 }

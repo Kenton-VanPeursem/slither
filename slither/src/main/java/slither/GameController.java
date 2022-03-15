@@ -37,7 +37,7 @@ public class GameController extends JFrame {
         setSize(config.getWindowSize(), config.getWindowSize() + WINDOW_BUFFER);
         setResizable(false);
 
-        game = new GamePanel(getWidth(), getHeight(), config.getBlockSize());
+        game = new GamePanel(getWidth(), getHeight(), config.getBlockSize(), config.randSeed());
 
         getContentPane().add(game, BorderLayout.CENTER);
         revalidate();

@@ -16,16 +16,17 @@ public class PlayerTracker {
         this.player = player;
     }
 
-    public void recordGame(int score, int gameTicks, int boardSeed) {
+    public void recordGame(int score, int gameTicks, long boardSeed) {
         String fname = player.getClass().getSimpleName() + ".csv";
 
         FileWriter fw = null;
         try {
             File f = new File(fname);
-            fw = new FileWriter(fname, true);
             if (f.createNewFile()) {
+                fw = new FileWriter(fname, true);
                 fw.write(String.format("Score,Ticks,PlayerSeed,BoardSeed%n"));
             } else {
+                fw = new FileWriter(fname, true);
                 logger.debug("Created file already exists");
             }
             fw.write(String.format("%d,%d,%d,%d%n",

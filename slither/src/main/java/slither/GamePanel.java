@@ -30,7 +30,7 @@ public class GamePanel extends JPanel {
 
     private transient Map<Point, Boolean> outOfBoundsCache = new Hashtable<>();
 
-    public GamePanel(int width, int height, int blocksize) {
+    public GamePanel(int width, int height, int blocksize, long seed) {
         logger.debug("Creating GamePanel width:{} height:{} blocksize:{}",
                 width, height, blocksize);
 
@@ -38,7 +38,7 @@ public class GamePanel extends JPanel {
         dim = width / blocksize;
 
         int start = dim / 3;
-        snake = new Snake(start, start, dim, dim);
+        snake = new Snake(start, start, dim, dim, seed);
     }
 
     public void start(int millis) {

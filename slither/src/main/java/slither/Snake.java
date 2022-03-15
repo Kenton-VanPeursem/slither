@@ -27,6 +27,7 @@ public class Snake {
     private int maxY;
 
     private Random rand;
+    private long seed;
 
     public Snake(int x, int y, int maxX, int maxY) {
         rand = new Random();
@@ -44,7 +45,8 @@ public class Snake {
         positionsLog();
     }
 
-    public Snake(int x, int y, int maxX, int maxY, int seed) {
+    public Snake(int x, int y, int maxX, int maxY, long seed) {
+        this.seed = seed;
         setRandomSeed(seed);
 
         this.maxX = maxX;
@@ -246,5 +248,9 @@ public class Snake {
 
     public synchronized boolean didCollide() {
         return body.stream().anyMatch(b -> b.equals(head));
+    }
+
+    public long randSeed() {
+        return seed;
     }
 }
