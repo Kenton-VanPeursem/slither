@@ -43,7 +43,7 @@ public class GameController extends JFrame {
         revalidate();
 
         // maybe just don't add a new key listener if already exists?
-        if (!config.isHumanPlayer()) {
+        if (config.isHumanPlayer()) {
             for (var kl : getKeyListeners() ) {
                 removeKeyListener(kl);
             }
