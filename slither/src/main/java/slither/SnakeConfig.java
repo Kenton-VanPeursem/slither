@@ -4,11 +4,20 @@ public class SnakeConfig {
     private long frameSpeedMillis;
     private int windowSize;
     private int blockSize;
+    private boolean humanPlayer;
+
+    public SnakeConfig(long frameSpeedMillis, int windowSize, int blockSize, boolean humanPlayer) {
+        this.frameSpeedMillis = frameSpeedMillis;
+        this.windowSize = windowSize;
+        this.blockSize = blockSize;
+        this.humanPlayer = humanPlayer;
+    }
 
     public SnakeConfig(long frameSpeedMillis, int windowSize, int blockSize) {
         this.frameSpeedMillis = frameSpeedMillis;
         this.windowSize = windowSize;
         this.blockSize = blockSize;
+        this.humanPlayer = true;
     }
 
     public long getFrameSpeedMillis() {
@@ -21,6 +30,10 @@ public class SnakeConfig {
 
     public int getBlockSize() {
         return this.blockSize;
+    }
+
+    public boolean isHumanPlayer() {
+        return this.humanPlayer;
     }
 
     @Override

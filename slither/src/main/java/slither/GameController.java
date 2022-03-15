@@ -43,12 +43,13 @@ public class GameController extends JFrame {
         revalidate();
 
         // maybe just don't add a new key listener if already exists?
-        for (var kl : getKeyListeners() ) {
-            removeKeyListener(kl);
+        if (!config.isHumanPlayer()) {
+            for (var kl : getKeyListeners() ) {
+                removeKeyListener(kl);
+            }
+            addKeyListener(new SnakeController());
+            requestFocus();
         }
-        addKeyListener(new SnakeController());
-
-        requestFocus();
 
         game.start((int) config.getFrameSpeedMillis());
     }

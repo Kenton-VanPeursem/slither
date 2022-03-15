@@ -123,6 +123,10 @@ public class Snake {
         return head;
     }
 
+    public int score() {
+        return body.size();
+    }
+
     public List<Point> getPositions() {
         // return the positions that are taken for
         ArrayList<Point> positions = new ArrayList<>();

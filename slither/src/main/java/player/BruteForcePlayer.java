@@ -44,29 +44,24 @@ public class BruteForcePlayer implements Player {
         gameController.setUserInput(bestDirection);
     }
 
-    public static void main(String[] args) {
-        BruteForcePlayer player = new BruteForcePlayer();
-        GameController gameController = new GameController();
-
-        var block = 25;
-        var boardSize = 21;
-
-        SnakeConfig config = new SnakeConfig(25, boardSize * block, block);
+    @Override
+    public int play(GameController gameController, SnakeConfig config, int seed) {
         gameController.initSnake(config);
 
         Snake board = gameController.getSnake();
-        board.setRandomSeed(3); // for reproducibility: 55996 ticks
+        board.setRandomSeed(seed); // for reproducibility: 55996 ticks
 
         gameController.begin();
         while(!(gameController.isWinner() || gameController.gameOver())) {
-            player.analyzeBoard(board);
-            player.makeMove(gameController);
+            analyzeBoard(board);
+            makeMove(gameController);
         }
 
-        if (board.isWinner()) {
-            logger.info("Won game in {} ticks", board.getTotalTicks());
-        } else {
-            logger.info("Lost game in {} ticks", board.getTotalTicks());
-        }
+        return board.score();
+    }
+
+    @Override
+    public int randSeed() {
+        return -1;
     }
 }

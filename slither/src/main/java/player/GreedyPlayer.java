@@ -2,15 +2,31 @@ package player;
 
 import java.util.Set;
 import java.util.HashSet;
-
+import java.util.Random;
 import java.util.Arrays;
 
 import org.slf4j.*;
 
+import recorder.PlayerTracker;
 import slither.*;
 
 public class GreedyPlayer implements Player {
     private static final Logger logger = LoggerFactory.getLogger(GreedyPlayer.class);
+
+    PlayerTracker tracker = new PlayerTracker(this);
+
+    private Random rand;
+    private int seed;
+
+    public GreedyPlayer() {
+        seed = new Random().nextInt();
+        rand = new Random(seed);
+    }
+
+    public GreedyPlayer(int seed) {
+        this.seed = seed;
+        rand = new Random(seed);
+    }
 
     private Direction bestDirection;
 
@@ -55,8 +71,11 @@ public class GreedyPlayer implements Player {
         }
 
         var possibleDirectionsIter = nextSteps.iterator();
-        if (possibleDirectionsIter.hasNext()) {
-            bestDirection = nextSteps.iterator().next();
+        if (!nextSteps.isEmpty()) {
+            var randomChoice = rand.nextInt(nextSteps.size());
+            for (int i = 0; i <= randomChoice; i++) {
+                bestDirection = possibleDirectionsIter.next();
+            }
         }
     }
 
@@ -85,36 +104,23 @@ public class GreedyPlayer implements Player {
         }
     }
 
-    public static void main(String[] args) {
-        Player player = new GreedyPlayer();
-        GameController gameController = new GameController();
+    public int play(GameController gameController, SnakeConfig config, int seed) {
+        gameController.initSnake(config);
 
-        var block = 25;
-        var boardSize = 21;
-
-        int highestScore = -1;
-
-        SnakeConfig config = new SnakeConfig(50, boardSize * block, block);
-
-        for (int i = 0; i < 10; i++) {
-            gameController.initSnake(config);
-
-            Snake board = gameController.getSnake();
-            gameController.begin();
-            while(!(gameController.isWinner() || gameController.gameOver())) {
-                player.analyzeBoard(board);
-                player.makeMove(gameController);
-            }
-
-            if (board.isWinner()) {
-                logger.info("Won game in {} ticks", board.getTotalTicks());
-            } else {
-                logger.info("Lost game in {} ticks", board.getTotalTicks());
-            }
-
-            highestScore = Math.max(highestScore, board.getBody().size());
-            logger.info("Current Score: {}", board.getBody().size());
-            logger.info("Highest Score: {}", highestScore);
+        Snake board = gameController.getSnake();
+        board.setRandomSeed(seed);
+        gameController.begin();
+        while(!(gameController.isWinner() || gameController.gameOver())) {
+            analyzeBoard(board);
+            makeMove(gameController);
         }
+        tracker.recordGame(board.score(), board.getTotalTicks(), seed);
+
+        return board.score();
+    }
+
+    @Override
+    public int randSeed() {
+        return seed;
     }
 }
