@@ -19,6 +19,7 @@ public class PlayerTracker {
     public void recordGame(int score, int gameTicks, long boardSeed) {
         String fname = player.getClass().getSimpleName() + ".csv";
 
+        // ugly
         FileWriter fw = null;
         try {
             File f = new File(fname);
@@ -38,8 +39,7 @@ public class PlayerTracker {
                 try {
                     fw.close();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    logger.error("Exception closing recordGame writer.");
                 }
             }
         }
