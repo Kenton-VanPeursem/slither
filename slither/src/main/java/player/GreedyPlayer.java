@@ -126,11 +126,11 @@ public class GreedyPlayer implements Player {
 
     @Override
     public void initializePlayer(String infile) {
-        // TODO Auto-generated method stub
+        // TODO: initialize with randomSeed
     }
 
     @Override
     public void storePlayerInfo(String outfile) {
-        // TODO Auto-generated method stub
+        // TODO: store randomSeed
     }
 }

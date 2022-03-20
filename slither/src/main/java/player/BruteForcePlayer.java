@@ -65,11 +65,11 @@ public class BruteForcePlayer implements Player {
 
     @Override
     public void initializePlayer(String infile) {
-        // TODO Auto-generated method stub
+        // Brute force player requires no initialization
     }
 
     @Override
     public void storePlayerInfo(String outfile) {
-        // TODO Auto-generated method stub
+        // Brute force player has nothing to store
     }
 }
