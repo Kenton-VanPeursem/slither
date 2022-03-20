@@ -123,4 +123,14 @@ public class GreedyPlayer implements Player {
     public long randSeed() {
         return seed;
     }
+
+    @Override
+    public void initializePlayer(String infile) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void storePlayerInfo(String outfile) {
+        // TODO Auto-generated method stub
+    }
 }

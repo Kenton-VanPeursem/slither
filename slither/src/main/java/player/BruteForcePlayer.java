@@ -62,4 +62,14 @@ public class BruteForcePlayer implements Player {
     public long randSeed() {
         return -1;
     }
+
+    @Override
+    public void initializePlayer(String infile) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void storePlayerInfo(String outfile) {
+        // TODO Auto-generated method stub
+    }
 }

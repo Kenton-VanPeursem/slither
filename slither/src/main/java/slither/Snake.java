@@ -29,8 +29,11 @@ public class Snake {
     private Random rand;
     private long seed;
 
+    private boolean ateOnLastStep = false;
+
     public Snake(int x, int y, int maxX, int maxY) {
-        rand = new Random();
+        seed = new Random().nextInt(Integer.MAX_VALUE);
+        rand = new Random(seed);
 
         this.maxX = maxX;
         this.maxY = maxY;
@@ -47,7 +50,7 @@ public class Snake {
 
     public Snake(int x, int y, int maxX, int maxY, long seed) {
         this.seed = seed;
-        setRandomSeed(seed);
+        rand = new Random(seed);
 
         this.maxX = maxX;
         this.maxY = maxY;
@@ -60,6 +63,23 @@ public class Snake {
         applePos = randomApple();
 
         positionsLog();
+    }
+
+    public Snake(Snake that) {
+        this.seed = that.seed;
+        rand = new Random(seed);
+
+        this.maxX = that.maxX;
+        this.maxY = that.maxY;
+        this.head = that.head.copy();
+
+        this.addLocation = that.addLocation.copy();
+        this.applePos = that.applePos.copy();
+        this.faceDirection = that.faceDirection;
+
+        for (int i = 0; i < that.body.size(); i++) {
+            this.body.add(that.body.get(i).copy());
+        }
     }
 
     public void positionsLog() {
@@ -77,16 +97,16 @@ public class Snake {
         applePos = randomApple();
     }
 
+    public boolean ateOnLastStep() {
+        return ateOnLastStep;
+    }
+
     public int maxX() {
         return maxX;
     }
 
     public int maxY() {
         return maxY;
-    }
-
-    public void setRandomSeed(long seed) {
-        rand = new Random(seed);
     }
 
     private void followHead() {
@@ -196,7 +216,8 @@ public class Snake {
 
         positionsLog();
 
-        if (applePos.equals(head)) {
+        ateOnLastStep = applePos.equals(head);
+        if (ateOnLastStep) {
             eat();
         }
 
@@ -248,6 +269,10 @@ public class Snake {
 
     public synchronized boolean didCollide() {
         return body.stream().anyMatch(b -> b.equals(head));
+    }
+
+    public synchronized boolean outOfBounds() {
+        return head.getX() < 0 || head.getX() >= maxX || head.getY() < 0 || head.getY() >= maxY;
     }
 
     public long randSeed() {

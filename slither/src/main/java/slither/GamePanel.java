@@ -28,6 +28,8 @@ public class GamePanel extends JPanel {
     private boolean pauseFlag = false;
     private boolean started = false;
 
+    private boolean onMovement = false;
+
     private transient Map<Point, Boolean> outOfBoundsCache = new Hashtable<>();
 
     public GamePanel(int width, int height, int blocksize, long seed) {
@@ -42,6 +44,11 @@ public class GamePanel extends JPanel {
     }
 
     public void start(int millis) {
+        if (millis < 1) {
+            onMovement = true;
+            return;
+        }
+
         ActionListener l = new MyUpdateListener();
         timer = new Timer(millis, l);
         timer.start();
@@ -70,6 +77,9 @@ public class GamePanel extends JPanel {
 
     public void setUserInput(Direction direction) {
         snake.setDirection(direction);
+        if (onMovement) {
+            step();
+        }
     }
 
     public Snake getSnake() {
@@ -218,20 +228,10 @@ public class GamePanel extends JPanel {
         return snake.didCollide();
     }
 
-    private boolean outOfBounds(Point position) {
-        logger.debug("Position {} << {} {}",
-                position,
-                dim, dim);
-        return (position.getX() < 0
-                || position.getX() >= dim
-                || position.getY() < 0
-                || position.getY() >= dim);
-    }
-
     private boolean outOfBounds() {
         return outOfBoundsCache.computeIfAbsent(
                 snake.getHeadPosition(),
-                pos -> Boolean.valueOf(outOfBounds(pos))
+                pos -> Boolean.valueOf(snake.outOfBounds())
             ).booleanValue();
     }
 
@@ -247,11 +247,12 @@ public class GamePanel extends JPanel {
                 timer.stop();
         }
 
-        private void step() {
-            if (!isPaused() && !gameOver()) {
-                snake.move();
-            }
-            repaint();
+    }
+
+    private void step() {
+        if (!isPaused() && !gameOver()) {
+            snake.move();
         }
+        repaint();
     }
 }

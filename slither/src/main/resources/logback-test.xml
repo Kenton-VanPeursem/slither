@@ -5,7 +5,8 @@
         </encoder>
     </appender>
     <logger name="player.GreedyPlayer" level="debug"/>
-    <logger name="slither.Snake" level="info"/>
+    <!-- <logger name="player.QLearningPlayer" level="debug"/> -->
+    <!-- <logger name="slither.Snake" level="debug"/> -->
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
