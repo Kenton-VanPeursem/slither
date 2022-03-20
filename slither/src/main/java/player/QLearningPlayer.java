@@ -73,15 +73,9 @@ public class QLearningPlayer implements Player {
             analyzeBoard(board);
             action = directionToAction(bestDirection);
             updateQMatrix(board, initState, action);
-
             makeMove(gameController);
-
-            // try {
-            //     Thread.sleep(50);
-            // } catch (InterruptedException e) {
-            //     logger.error("Sleeper Exception", e);
-            // }
         }
+
         tracker.recordGame(board.score(), board.getTotalTicks(), config.randSeed());
 
         return board.score();
