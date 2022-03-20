@@ -30,6 +30,7 @@ public class QLearningPlayer implements Player {
 
     private long episode = 0;
     private boolean training = true;
+    private long trainingPeriod = 1000;
 
     private Direction bestDirection;
 
@@ -154,7 +155,7 @@ public class QLearningPlayer implements Player {
             return false;
         }
         // exploration 20% of the time in first 100,000 episodes otherwise only 5% of time
-        return (episode < 100000 && rand.nextInt(5) == 1) || rand.nextInt(20) == 1;
+        return (episode < trainingPeriod && rand.nextInt(5) == 1) || rand.nextInt(20) == 1;
     }
 
     private Direction requestDirection(Snake board) {
@@ -212,36 +213,58 @@ public class QLearningPlayer implements Player {
         var apple = board.applePosition();
 
         QState state = new QState();
+        if (board.isWinner()) {
+            return state.get();
+        }
+        // apple horizontal direction
         if (head.getX() < apple.getX())
             state.setAppleRight();
         else if (head.getX() > apple.getX())
             state.setAppleLeft();
 
+        // apple vertical direction
         if (head.getY() < apple.getY())
             state.setAppleDown();
         else if (head.getY() > apple.getY())
             state.setAppleUp();
 
+        // previous direction
         state.setPrevDirection(board.currentDirection());
 
+        // set left and right walls
         if (head.getX() == 0)
             state.setWallLeft();
         else if (head.getX() == board.maxX() - 1)
             state.setWallRight();
 
+        // set top and bottom walls
         if (head.getY() == 0)
             state.setWallUp();
         else if (head.getY() == board.maxY() - 1)
             state.setWallDown();
+
+        // set available positions
+        for (Direction d : Direction.values()) {
+            if (directionAvailable(board, d)) {
+                state.setAvailable(d);
+            }
+        }
 
         var stateVal = state.get();
         logger.debug("with state: {}", stateVal);
         return stateVal;
     }
 
+    private boolean directionAvailable(Snake start, Direction direction) {
+        Snake snakeLeft = new Snake(start);
+        snakeLeft.setDirection(direction);
+        snakeLeft.move();
+        return !(snakeLeft.didCollide() && snakeLeft.outOfBounds());
+    }
+
     private double computeReward(Snake board) {
         if (board.didCollide() || board.outOfBounds())
-            return -10.0;
+            return -100.0;
         if (board.ateOnLastStep())
             return 1000.0;
 
@@ -278,8 +301,8 @@ public class QLearningPlayer implements Player {
     }
 
     private class QState {
-        private BitSet stateBits = new BitSet(10);
-        private static final int NUM_STATES = 1023;
+        private BitSet stateBits = new BitSet(14);
+        private static final int NUM_STATES = 16383;
 
         public void setAppleLeft() {
             stateBits.set(0);
@@ -332,6 +355,38 @@ public class QLearningPlayer implements Player {
 
         public void setWallRight() {
             stateBits.set(9);
+        }
+
+        public void setAvailable(Direction direction) {
+            switch (direction) {
+                case LEFT:
+                    setLeftAvailable();
+                    break;
+                case UP:
+                    setUpAvailable();
+                    break;
+                case DOWN:
+                    setDownAvailable();
+                    break;
+                case RIGHT:
+                    setRightAvailable();
+            }
+        }
+
+        private void setLeftAvailable() {
+            stateBits.set(10);
+        }
+
+        private void setUpAvailable() {
+            stateBits.set(11);
+        }
+
+        private void setDownAvailable() {
+            stateBits.set(12);
+        }
+
+        private void setRightAvailable() {
+            stateBits.set(13);
         }
 
         public int get() {

@@ -11,13 +11,13 @@ import java.util.HashSet;
 public class Snake {
     private static final Logger logger = LoggerFactory.getLogger(Snake.class);
 
+    private static final int MOVEMENT_DELTA = 1;
+
     private Point head;
     private Point addLocation;
     private List<Point> body = new ArrayList<>();
     private Point applePos;
     private Direction faceDirection = Direction.RIGHT;
-
-    private int delta = 1;
 
     private boolean won = false;
 
@@ -41,7 +41,7 @@ public class Snake {
         logger.debug("Snake with start position {}", head);
 
         addLocation = head.copy();
-        addLocation.decrementX(delta);
+        addLocation.decrementX(MOVEMENT_DELTA);
 
         applePos = randomApple();
 
@@ -58,7 +58,7 @@ public class Snake {
         logger.debug("Snake with start position {}", head);
 
         addLocation = head.copy();
-        addLocation.decrementX(delta);
+        addLocation.decrementX(MOVEMENT_DELTA);
 
         applePos = randomApple();
 
@@ -123,22 +123,22 @@ public class Snake {
 
     private void right() {
         followHead();
-        head.incrementX(delta);
+        head.incrementX(MOVEMENT_DELTA);
     }
 
     private void left() {
         followHead();
-        head.decrementX(delta);
+        head.decrementX(MOVEMENT_DELTA);
     }
 
     private void up() {
         followHead();
-        head.decrementY(delta);
+        head.decrementY(MOVEMENT_DELTA);
     }
 
     private void down() {
         followHead();
-        head.incrementY(delta);
+        head.incrementY(MOVEMENT_DELTA);
     }
 
     public Point getHeadPosition() {
@@ -174,23 +174,23 @@ public class Snake {
         }
     }
 
-    public Point nextPoint(Point x, Direction direction) {
+    public static Point nextPoint(Point x, Direction direction) {
         var next = x.copy();
         switch (direction) {
             case UP:
-                next.decrementY(delta);
+                next.decrementY(MOVEMENT_DELTA);
                 break;
             case DOWN:
-                next.incrementY(delta);
+                next.incrementY(MOVEMENT_DELTA);
                 break;
             case LEFT:
-                next.decrementX(delta);
+                next.decrementX(MOVEMENT_DELTA);
                 break;
             case RIGHT:
-                next.incrementX(delta);
+                next.incrementX(MOVEMENT_DELTA);
                 break;
             default:
-                logger.error("Unknown Direction: {}", faceDirection);
+                logger.error("Unknown Direction: {}", direction);
         }
 
         return next;

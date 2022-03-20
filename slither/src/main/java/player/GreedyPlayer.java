@@ -48,7 +48,7 @@ public class GreedyPlayer implements Player {
         while (dirIterator.hasNext()) {
             var dir = dirIterator.next();
 
-            var next = board.nextPoint(head, dir);
+            var next = Snake.nextPoint(head, dir);
             if (board.getAvailablePositions().contains(next)) {
                 nextDirections.add(dir);
             }

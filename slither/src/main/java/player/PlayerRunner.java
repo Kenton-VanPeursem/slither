@@ -13,15 +13,25 @@ public class PlayerRunner {
     private int block;
     private int boardSize;
     private int games;
-    private Class<? extends Player> playerClazz;
     private int visualizationDelay = 0;
+
+    private Class<? extends Player> playerClazz;
+    private String initialPlayerFile;
+    private String exportPlayerFile;
+    private boolean playerInTraining;
 
     public PlayerRunner(
             Class<? extends Player> playerClazz,
+            String initialPlayerFile,
+            String exportPlayerFile,
+            boolean playerInTraining,
             int visualizationDelay,
             int block,
             int boardSize,
             int games) {
+        this.initialPlayerFile = initialPlayerFile;
+        this.exportPlayerFile = exportPlayerFile;
+        this.playerInTraining = playerInTraining;
         this.visualizationDelay = visualizationDelay;
         this.block = block;
         this.boardSize = boardSize;
@@ -67,9 +77,12 @@ public class PlayerRunner {
         double totalScore = 0.0;
 
         var player = playerFactory(playerClazz);
-        player.initializePlayer("QLearningPlayer_0318b.csv");
+        if (initialPlayerFile != null) {
+            player.initializePlayer(initialPlayerFile);
+        }
+        ((QLearningPlayer) player).setTraining(playerInTraining);
 
-        for (int i = 1; i < games; i++) {
+        for (int i = 1; i <= games; i++) {
             int score = player.play(gameController, generateSnakeConfig());
             totalScore += score;
             highestScore = Math.max(highestScore, score);
@@ -80,6 +93,9 @@ public class PlayerRunner {
 
         long endTime = System.currentTimeMillis();
         logger.info("Took {} hours", ((double) (endTime-startTime)) / 1000 / 60 / 60);
+
+        if (exportPlayerFile != null)
+            player.storePlayerInfo(exportPlayerFile);
 
         return highestScore;
     }
@@ -94,7 +110,21 @@ public class PlayerRunner {
         // bug in bruteForce when boardSize is odd number
         // PlayerRunner runner = new PlayerRunner(25, 20, 1, BruteForcePlayer.class);
 
-        PlayerRunner runner = new PlayerRunner(QLearningPlayer.class, 0, 100, 6, 100);
-        runner.run();
+        int prev = 0;
+        PlayerRunner runner;
+        for (int i = 10000; i <= 1000000; i *= 10) {
+            String learnedFile = "QLearningPlayer_" + i + ".csv";
+            if (prev < 1) {
+                runner = new PlayerRunner(QLearningPlayer.class, null, learnedFile, true, 0, 100, 6, i);
+                runner.run();
+            } else {
+                String prevLearnedFile = "QLearningPlayer_" + prev + ".csv";
+                runner = new PlayerRunner(QLearningPlayer.class, prevLearnedFile, learnedFile, true, 0, 100, 6, i);
+                runner.run();
+            }
+            runner = new PlayerRunner(QLearningPlayer.class, learnedFile, null, true, 100, 100, 6, 5);
+            runner.run();
+            prev = i;
+        }
     }
 }
