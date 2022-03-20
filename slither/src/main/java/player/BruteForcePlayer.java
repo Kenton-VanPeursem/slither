@@ -60,16 +60,17 @@ public class BruteForcePlayer implements Player {
 
     @Override
     public long randSeed() {
+        // no random seed for BruteForcePlayer
         return -1;
     }
 
     @Override
     public void initializePlayer(String infile) {
-        // Brute force player requires no initialization
+        // BruteForcePlayer requires no initialization
     }
 
     @Override
     public void storePlayerInfo(String outfile) {
-        // Brute force player has nothing to store
+        // BruteForcePlayer has nothing to store
     }
 }
