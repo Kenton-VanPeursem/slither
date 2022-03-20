@@ -19,29 +19,17 @@ public class PlayerTracker {
     public void recordGame(int score, int gameTicks, long boardSeed) {
         String fname = player.getClass().getSimpleName() + ".csv";
 
-        // ugly
-        FileWriter fw = null;
-        try {
-            File f = new File(fname);
-            if (f.createNewFile()) {
-                fw = new FileWriter(fname, true);
+        File f = new File(fname);
+        boolean needsHeader = !f.exists();
+
+        try (FileWriter fw = new FileWriter(fname, true)) {
+            if (needsHeader) {
                 fw.write(String.format("Score,Ticks,PlayerSeed,BoardSeed%n"));
-            } else {
-                fw = new FileWriter(fname, true);
-                logger.debug("Created file already exists");
             }
             fw.write(String.format("%d,%d,%d,%d%n",
                     score, gameTicks, player.randSeed(), boardSeed));
         } catch (IOException e) {
             logger.warn("Error recording score for {}", player.getClass());
-        } finally {
-            if (fw != null) {
-                try {
-                    fw.close();
-                } catch (IOException e) {
-                    logger.error("Exception closing recordGame writer.");
-                }
-            }
         }
     }
 }
