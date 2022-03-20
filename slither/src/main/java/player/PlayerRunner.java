@@ -14,9 +14,15 @@ public class PlayerRunner {
     private int boardSize;
     private int games;
     private Class<? extends Player> playerClazz;
-    private int millisSleep = 0;
+    private int visualizationDelay = 0;
 
-    public PlayerRunner(int block, int boardSize, int games, Class<? extends Player> playerClazz) {
+    public PlayerRunner(
+            Class<? extends Player> playerClazz,
+            int visualizationDelay,
+            int block,
+            int boardSize,
+            int games) {
+        this.visualizationDelay = visualizationDelay;
         this.block = block;
         this.boardSize = boardSize;
         this.games = games;
@@ -25,12 +31,16 @@ public class PlayerRunner {
     }
 
     public SnakeConfig generateSnakeConfig() {
-        return new SnakeConfig(
-                millisSleep, boardSize * block, block, false, rand.nextInt(Integer.MAX_VALUE));
+        return generateSnakeConfig(rand.nextInt(Integer.MAX_VALUE));
     }
 
     public SnakeConfig generateSnakeConfig(long boardSeed) {
-        return new SnakeConfig(millisSleep, boardSize * block, block, false, boardSeed);
+        return new SnakeConfig(
+                visualizationDelay,
+                boardSize * block,
+                block,
+                false,
+                boardSeed);
     }
 
     public int numGames() {
@@ -59,25 +69,13 @@ public class PlayerRunner {
         var player = playerFactory(playerClazz);
         player.initializePlayer("QLearningPlayer_0318b.csv");
 
-        int i = 1;
-        int j = 1;
-        while (totalScore / i < 20) {
+        for (int i = 1; i < games; i++) {
             int score = player.play(gameController, generateSnakeConfig());
             totalScore += score;
             highestScore = Math.max(highestScore, score);
+
             logger.info("Game: {} Score: {} Highest: {} Ticks: {} Ave: {}",
-                    j, score, highestScore, gameController.getSnake().getTotalTicks(), (totalScore / i));
-
-            // if (i > 0 && i % 1000 == 0) {
-            //     player.storePlayerInfo("QLearningPlayer_0318b.csv");
-            // }
-
-            if (totalScore / i < 5) {
-                totalScore = score;
-                i = 0;
-            }
-            i++;
-            j++;
+                    i, score, highestScore, gameController.getSnake().getTotalTicks(), (totalScore / i));
         }
 
         long endTime = System.currentTimeMillis();
@@ -93,11 +91,10 @@ public class PlayerRunner {
     }
 
     public static void main(String[] args) {
-        // bug in bruteForce when boardSize is even number
+        // bug in bruteForce when boardSize is odd number
         // PlayerRunner runner = new PlayerRunner(25, 20, 1, BruteForcePlayer.class);
 
-        PlayerRunner runner = new PlayerRunner(100, 6, 100, QLearningPlayer.class);
+        PlayerRunner runner = new PlayerRunner(QLearningPlayer.class, 0, 100, 6, 100);
         runner.run();
-        // runner.replay(736594793,832892518);
     }
 }
