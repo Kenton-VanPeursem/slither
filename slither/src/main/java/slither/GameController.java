@@ -14,7 +14,7 @@ public class GameController extends JFrame {
 
     private static final int WINDOW_BUFFER = 25;
 
-    GameController() {
+    public GameController() {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         setTitle("Snake");
@@ -37,20 +37,41 @@ public class GameController extends JFrame {
         setSize(config.getWindowSize(), config.getWindowSize() + WINDOW_BUFFER);
         setResizable(false);
 
-        game = new GamePanel(getWidth(), getHeight(), config.getBlockSize());
+        game = new GamePanel(getWidth(), getHeight(), config.getBlockSize(), config.randSeed());
 
         getContentPane().add(game, BorderLayout.CENTER);
         revalidate();
 
         // maybe just don't add a new key listener if already exists?
-        for (var kl : getKeyListeners() ) {
-            removeKeyListener(kl);
+        if (config.isHumanPlayer()) {
+            for (var kl : getKeyListeners() ) {
+                removeKeyListener(kl);
+            }
+            addKeyListener(new SnakeController());
+            requestFocus();
         }
-        addKeyListener(new SnakeController());
-
-        requestFocus();
 
         game.start((int) config.getFrameSpeedMillis());
+    }
+
+    public Snake getSnake() {
+        return game.getSnake();
+    }
+
+    public boolean gameOver() {
+        return game.gameOver();
+    }
+
+    public boolean isWinner() {
+        return game.isWinner();
+    }
+
+    public void begin() {
+        game.begin();
+    }
+
+    public void setUserInput(Direction direction) {
+        game.setUserInput(direction);
     }
 
     private class SnakeController implements KeyListener {
@@ -106,7 +127,7 @@ public class GameController extends JFrame {
             }
 
             if (!game.isPaused()) {
-                game.setUserInput(dir);
+                setUserInput(dir);
             }
         }
 

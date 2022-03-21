@@ -6,3 +6,7 @@
 **/bin
 
 **/.DS_Store
+**/*.csv
+
+# python virtual environment for running scripts
+**/dev_env

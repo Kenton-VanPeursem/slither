@@ -6,6 +6,7 @@ import javax.swing.*;
 
 
 import java.awt.event.ActionListener;
+import java.util.Random;
 import java.awt.event.ActionEvent;
 
 import java.awt.GridLayout;
@@ -13,7 +14,7 @@ import java.awt.GridLayout;
 public class StartMenuPanel extends JPanel {
     private static final Logger logger = LoggerFactory.getLogger(StartMenuPanel.class);
 
-    StartMenuPanel() {
+    public StartMenuPanel() {
         JLabel label = new JLabel("Snake Game", SwingConstants.CENTER);
         setLayout(new GridLayout(4,1));
         add(label);
@@ -34,6 +35,8 @@ public class StartMenuPanel extends JPanel {
     private class DifficultyButtonHandler implements ActionListener {
         Difficulty difficulty = Difficulty.UNSET;
 
+        Random rand = new Random();
+
         DifficultyButtonHandler(Difficulty difficulty) {
             this.difficulty = difficulty;
         }
@@ -46,15 +49,15 @@ public class StartMenuPanel extends JPanel {
 
         private SnakeConfig getConfig(Difficulty val) {
             if (val == Difficulty.SUPER_EASY)
-                return new SnakeConfig(500, 100, 50);
+                return new SnakeConfig(500, 100, 50, rand.nextInt());
 
             if (val == Difficulty.MEDIUM)
-                return new SnakeConfig(125, 800, 50);
+                return new SnakeConfig(125, 800, 50, rand.nextInt());
 
             if (val == Difficulty.HARD)
-                return new SnakeConfig(75, 1050, 50);
+                return new SnakeConfig(75, 1050, 50, rand.nextInt());
 
-            return new SnakeConfig(250, 550, 50);
+            return new SnakeConfig(250, 550, 50, rand.nextInt());
         }
 
         private void playSnake(SnakeConfig config) {
